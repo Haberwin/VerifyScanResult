@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">VerifyScanResult</string>
+    <string name="input_tips">Input the correct Scan result here!</string>
+    <string name="continuous">Continuous</string>
+    <string name="stop">stop</string>
+    <string name="failed">Failed!</string>
+    <string name="confirm">Confirm</string>
+    <string name="scan">Scan</string>
+</resources>

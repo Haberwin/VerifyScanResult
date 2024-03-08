@@ -19,7 +19,7 @@
     <!-- 设置渐变角度angle和渐变颜色 -->
     <gradient
         android:angle="270"
-        android:endColor="#F782"
+        android:endColor="#FF5722"
         android:startColor="#13C7AF" />
     <!-- 设置各边倒角大小 -->
     <corners

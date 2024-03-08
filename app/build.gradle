@@ -36,5 +36,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:percent:27.1.1'
-    implementation files('libs/DataCollection.jar')
+
 }

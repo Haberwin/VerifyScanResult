@@ -15,92 +15,89 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MainActivity">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
 
         <EditText
             android:id="@+id/result_text"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="32dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_weight="1"
             android:inputType="textMultiLine"
             android:autofillHints=""
             tools:ignore="LabelFor" />
 
         <EditText
             android:id="@+id/correct_result"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="32dp"
+            android:layout_weight="1"
             android:hint="@string/input_tips"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/result_text"
             android:importantForAutofill="no"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+  />
 
-        <Button
-            android:id="@+id/comfirm"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/confirm"
+            android:layout_weight="1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/correct_result" />
+            app:layout_constraintTop_toBottomOf="@+id/correct_result">
+
+            <Button
+                android:id="@+id/comfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="3"
+                android:text="@string/confirm"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/correct_result" />
 
 
-        <Button
-            android:id="@+id/scan_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="32dp"
-            android:text="@string/scan"
-            app:layout_constraintStart_toEndOf="@+id/comfirm"
-            app:layout_constraintTop_toBottomOf="@+id/correct_result" />
+            <Button
+                android:id="@+id/scan_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="2"
+                android:text="@string/scan"
+                app:layout_constraintStart_toEndOf="@+id/comfirm"
+                app:layout_constraintTop_toBottomOf="@+id/correct_result" />
+
+            <EditText
+                android:id="@+id/intervalNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:hint="1000"
+                android:inputType="number" />
+            />
+
+            <Switch
+                android:id="@+id/automatic_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textOff="@string/stop"
+                android:textOn="@string/continuous"
+                app:layout_constraintStart_toEndOf="@+id/scan_button"
+                app:layout_constraintTop_toBottomOf="@+id/correct_result" />
 
 
-
-        <Switch
-            android:id="@+id/automatic_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
-            android:textOff="@string/stop"
-            android:textOn="@string/continuous"
-            app:layout_constraintStart_toEndOf="@+id/scan_button"
-            app:layout_constraintTop_toBottomOf="@+id/correct_result" />
-
-        <EditText
-            android:id="@+id/intervalNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:inputType="number"
-            android:hint="1000"
-            app:layout_constraintBottom_toBottomOf="@+id/automatic_switch"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/automatic_switch" />
+        </LinearLayout>
 
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="32dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
             android:orientation="vertical"
-            android:scrollbars="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scan_button">
+            android:scrollbars="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -111,17 +108,31 @@
                     android:id="@+id/textView"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="5"
                     android:background="@drawable/border"
                     android:text="Scan Result"
+                    android:textSize="9sp"
+                    android:textAlignment="center"
+                    android:textColor="#9C27B0" />
+
+                <TextView
+                    android:id="@+id/ScanType"
+                    android:layout_width="0dp"
+                    android:textSize="9sp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:background="@drawable/border"
+                    android:text="Barcode Type"
                     android:textAlignment="center"
                     android:textColor="#9C27B0" />
 
                 <TextView
                     android:id="@+id/textView2"
                     android:layout_width="0dp"
+                    android:textSize="9sp"
+
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:background="@drawable/border"
                     android:text="Times"
                     android:textAlignment="center"
@@ -130,8 +141,9 @@
                 <TextView
                     android:id="@+id/textView3"
                     android:layout_width="0dp"
+                    android:textSize="9sp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="2"
                     android:background="@drawable/border"
                     android:text="Decode time(ms)"
                     android:textAlignment="center"
@@ -142,11 +154,12 @@
                 android:id="@+id/result_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:divider="@color/colorPrimaryDark"
                 android:footerDividersEnabled="true"
-                android:headerDividersEnabled="true"
-                android:divider="@color/colorPrimaryDark"/>
+                android:headerDividersEnabled="true" />
         </LinearLayout>
 
+</LinearLayout>
 
 
 

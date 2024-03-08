@@ -26,10 +26,12 @@ public class ScanResultAdapter extends ArrayAdapter<ScanResultItem> {
         ScanResultItem scanResultItem=getItem(position);
         @SuppressLint("ViewHolder") View view= LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
         TextView resultItem=view.findViewById(R.id.result_item);
+        TextView barcodeTypeItem=view.findViewById(R.id.code_type);
         TextView timesItem =view.findViewById(R.id.times_item);
         TextView decodeItem = view.findViewById(R.id.decode_time);
         if (scanResultItem != null) {
             resultItem.setText(scanResultItem.getResult());
+            barcodeTypeItem.setText(scanResultItem.getCodeType());
             timesItem.setText(String.valueOf(scanResultItem.getTimes()));
             decodeItem.setText(String.valueOf(scanResultItem.getDecodeTime()));
         }

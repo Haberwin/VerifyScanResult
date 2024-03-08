@@ -2,9 +2,6 @@ package com.miracle.verifyScanResult;
 
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.os.PersistableBundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -19,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.honeywell.aidc.AidcManager;
@@ -33,10 +29,10 @@ import com.honeywell.aidc.ScannerUnavailableException;
 import com.honeywell.aidc.TriggerStateChangeEvent;
 import com.honeywell.aidc.UnsupportedPropertyException;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.ViewModelProvider;
+
 import static java.lang.Thread.sleep;
 
 //import com.honeywell.aidc.InvalidScannerNameException;
@@ -51,7 +47,10 @@ public class MainActivity extends AppCompatActivity
     private boolean mKeyPressed = false;
     private TextView resultText;
     public ScanResultItem correctResult,failedResult;
-    public String correctValue="";
+    public Barcode noneBarcode=new Barcode("Fail", Charset.defaultCharset(),"N/A","N/A");
+    private Barcode correctBarcode;
+    private Barcode lastBarcode;
+
 
     private List<ScanResultItem> resultList =new ArrayList<>();
     public ScanResultAdapter scanResultAdapter;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity
 
     public boolean continuousScan=false;
     public int intervalTime=1000;
-    public Long startDecodeTime=0L;
+    public Long decodeTime=0L;
     private ListView listView;
     Object binding;
     MyViewModel myViewModel;
@@ -183,36 +182,37 @@ public class MainActivity extends AppCompatActivity
             public void run() {
 
                 Log.d(TAG,"Enter onBarcodeEvent ==> "+ event.getBarcodeData());
-                String barcodeDate = new String(event.getBarcodeData().getBytes(event.getCharset()));
-                Log.d(TAG, "Enter onBarcodeEvent ==> " + barcodeDate);
+                lastBarcode=new Barcode(event.getBarcodeData(),event.getCharset(),event.getAimId(),event.getCodeId());
+                Log.d(TAG, "Enter onBarcodeEvent ==> " + lastBarcode.getData());
+                decodeTime= Long.valueOf(event.getTimestamp());
+                resultText.setText(lastBarcode.getData());
+//                decodeType="AIM id:"+event.getAimId()+"\r\nCode id:"+event.getCodeId();
 
-                resultText.setText(barcodeDate);
 
-                    if (!barcodeDate.equals(correctValue)) {
+                    if (!lastBarcode.equals(correctBarcode)) {
                         int i;
                         for( i=0;i<resultList.size();i++){
-                            if (barcodeDate.equals(resultList.get(i).getResult())) {
+                            if (lastBarcode.getData().equals(resultList.get(i).getResult())) {
                                 resultList.get(i).addTimes();
-                                resultList.get(i).setDecodeTime(System.currentTimeMillis()-startDecodeTime);
+//                                resultList.get(i).setDecodeTime(System.currentTimeMillis()-startDecodeTime);
+                                resultList.get(i).setCodeType(lastBarcode.getBarcodeType());
+                                resultList.get(i).setDecodeTime(decodeTime);
                                 break;
                             }
-
                         }
                         if (i==resultList.size()){
-                            ScanResultItem errorResult =new ScanResultItem(barcodeDate,System.currentTimeMillis()-startDecodeTime);
+                            ScanResultItem errorResult =new ScanResultItem(lastBarcode.getData(),lastBarcode.getBarcodeType(),Long.valueOf(event.getTimestamp()));
                             errorResult.addTimes();
-
                             resultList.add(errorResult);
                         }
-
                     }
                     else {
-
                         if(correctResult ==null){
-                            correctResult=new ScanResultItem(correctValue,System.currentTimeMillis()-startDecodeTime);
+                            correctResult=new ScanResultItem(lastBarcode.getData(),lastBarcode.getBarcodeType(),0L);
+                            correctResult.setDecodeTime(decodeTime);
                             resultList.add(correctResult);
                         }
-                        correctResult.setDecodeTime(System.currentTimeMillis()-startDecodeTime);
+                        correctResult.setDecodeTime(decodeTime);
                         correctResult.addTimes();
                     }
 
@@ -235,7 +235,9 @@ public class MainActivity extends AppCompatActivity
         runOnUiThread(new Runnable() {
             public void run() {
                 Log.d(TAG, "Enter onFailureEvent ===> " + event.getTimestamp());
-                resultText.setText(R.string.failed);
+                resultText.setText(noneBarcode.getData());
+                failedResult.setCodeType(noneBarcode.getBarcodeType());
+                failedResult.setDecodeTime(Long.valueOf(event.getTimestamp()));
                 failedResult.addTimes();
                 scanResultAdapter.notifyDataSetChanged();
             }
@@ -354,7 +356,7 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-        failedResult=new ScanResultItem("Failed",0L);
+        failedResult=new ScanResultItem(noneBarcode.getData(),noneBarcode.getBarcodeType(),0L);
         resultList.add(failedResult);
         resultText =findViewById(R.id.result_text);
         final EditText correctResultText =findViewById(R.id.correct_result);
@@ -362,18 +364,26 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 resultList.clear();
-
-                correctResultText.setText(resultText.getText());
-
-                correctValue=correctResultText.getText().toString();
+                failedResult.clearTimes();
+                resultList.add(failedResult);
+                if(lastBarcode!=null){
+                correctResultText.setText(lastBarcode.getData());
+                correctBarcode=lastBarcode;
+                }
+                if(correctBarcode==null){
+                    correctBarcode=noneBarcode;
+                }
 
                 for(int i=0;i<resultList.size();i++){
-                    if (correctValue.equals(resultList.get(i).getResult())){
+                    if (correctBarcode.getData().equals(resultList.get(i).getResult())){
                         return;
                     }
                 }
-                correctResult=new ScanResultItem(correctValue,System.currentTimeMillis()-startDecodeTime);
+                correctResult=new ScanResultItem(correctBarcode.getData(), correctBarcode.getBarcodeType(),0L);
                 resultList.add(correctResult);
+
+                scanResultAdapter.notifyDataSetChanged();
+
             }
         });
 
@@ -410,14 +420,6 @@ public class MainActivity extends AppCompatActivity
 
         });
 
-
-
-
-
-
-
-
-        //mTextView = findViewById(R.id.tv_show);
     }
 
     void doScan(boolean do_scan) {
@@ -427,7 +429,7 @@ public class MainActivity extends AppCompatActivity
             } else {
                 Log.d(TAG, "Cancel last Scan!");
             }
-            startDecodeTime=System.currentTimeMillis();
+//            startDecodeTime=System.currentTimeMillis();
             mBarcodeReader.decode(do_scan);
         } catch (ScannerNotClaimedException e) {
             Log.e(TAG, "catch ScannerNotClaimedException",e);
